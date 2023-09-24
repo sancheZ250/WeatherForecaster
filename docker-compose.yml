@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - celery
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: Weather
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: qweewqqwe
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  celery:
+    image: redis:latest
+    command: redis-server
+    volumes:
+      - redis_data:/data
+volumes:
+  postgres_data:
+  redis_data:
