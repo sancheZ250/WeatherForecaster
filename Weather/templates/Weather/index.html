@@ -4,39 +4,102 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Погодное приложение</title>
-    <!-- Подключение Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn {
+            border-radius: 5px;
+        }
+        #weatherData {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        th {
+            background-color: #f8f9fa;
+        }
+    </style>
 </head>
 <body>
-    <h1>{{ error_message }}</h1>
-    <form method="post" class="text-center mt-3">
-        {% csrf_token %}
-        <div>
-            <label for="latitude">Широта:</label>
-            <input type="text" name="latitude" id="latitude" required>
-            <button type="button" onclick="getGeolocation('latitude')">Получить</button>
+    <div class="container mt-4">
+        <h1>{{ error_message }}</h1>
+        <form method="post" class="text-center">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="latitude" class="form-label">Широта:</label>
+                <input type="text" name="latitude" id="latitude" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="longitude" class="form-label">Долгота:</label>
+                <input type="text" name="longitude" id="longitude" class="form-control" required>
+            </div>
+            <button type="button" onclick="getGeolocation()" class="btn btn-primary">Получить координаты</button>
+            <button type="submit" class="btn btn-success">Показать погоду</button>
+        </form>
+        <div id="weatherData" class="mt-4">
+            <h2>Данные о погоде</h2>
+            <table class="table">
+                <tr>
+                    <th>Параметр</th>
+                    <th>Значение</th>
+                </tr>
+                <tr>
+                    <td>Город:</td>
+                    <td>{{ name }}</td>
+                </tr>
+                <tr>
+                    <td>Температура:</td>
+                    <td>{{ temperature }}°C</td>
+                </tr>
+                <tr>
+                    <td>Ощущается как:</td>
+                    <td>{{ feels_like }}°C</td>
+                </tr>
+                <tr>
+                    <td>Описание погоды:</td>
+                    <td>{{ weather_condition }}</td>
+                </tr>
+                <tr>
+                    <td>Скорость ветра:</td>
+                    <td>{{ wind_speed }} м/с</td>
+                </tr>
+                <tr>
+                    <td>Влажность:</td>
+                    <td>{{ humidity }}%</td>
+                </tr>
+                <tr>
+                    <td>Давление:</td>
+                    <td>{{ pressure }} мм рт. ст.</td>
+                </tr>
+            </table>
         </div>
-        <div>
-            <label for="longitude">Долгота:</label>
-            <input type="text" name="longitude" id="longitude" required>
-            <button type="button" onclick="getGeolocation('longitude')">Получить</button>
-        </div>
-        <button type="submit" class="btn btn-primary">Показать погоду</button>
-    </form>
-    <div id="weatherData" class="mt-4">
-        <h2>Данные о погоде</h2>
-        <p>Температура: {{ temperature }}°C</p>
-        <p>Описание погоды: {{ weather_condition }}</p>
-        <p>Скорость ветра: {{ wind_speed }} м/с</p>
     </div>
 
     <script>
-        function getGeolocation(fieldId) {
+        function getGeolocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function (position) {
                     var latitude = position.coords.latitude.toFixed(2);
                     var longitude = position.coords.longitude.toFixed(2);
-                    document.getElementById(fieldId).value = (fieldId === 'latitude') ? latitude : longitude;
+                    document.getElementById('latitude').value = latitude;
+                    document.getElementById('longitude').value = longitude;
                 });
             } else {
                 alert("Геолокация не поддерживается вашим браузером.");
